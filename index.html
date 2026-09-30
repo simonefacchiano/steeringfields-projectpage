@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Steering Fields</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans" rel="stylesheet">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"], ["$$", "$$"]]
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --text: #202124;
+      --muted: #5f6368;
+      --line: #dadce0;
+      --paper: #ffffff;
+      --soft: #f7f8fa;
+      --accent: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--text);
+      font-family: "Noto Sans", Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 54px 0 64px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 44px;
+    }
+
+    h1 {
+      margin: 0 auto 14px;
+      max-width: 900px;
+      font-family: "Google Sans", "Noto Sans", Arial, sans-serif;
+      font-size: clamp(2.1rem, 4.8vw, 4.1rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .venue {
+      margin: 8px 0 24px;
+      color: #3c4043;
+      font-size: clamp(1.35rem, 2.6vw, 2rem);
+      font-weight: 600;
+    }
+
+    .authors {
+      max-width: 920px;
+      margin: 0 auto 10px;
+      color: #202124;
+      font-size: clamp(1rem, 1.7vw, 1.22rem);
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .authors a,
+    .authors span {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .authors strong {
+      font-size: 0.98em;
+      font-weight: 700;
+    }
+
+    .affiliations {
+      max-width: 900px;
+      margin: 0 auto 8px;
+      color: #3c4043;
+      font-size: 0.98rem;
+      text-align: center;
+    }
+
+    .links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: #2b2f36;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 650;
+      font-size: 0.95rem;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .button:hover {
+      background: #111827;
+      transform: translateY(-1px);
+    }
+
+    .button.disabled {
+      background: #9aa0a6;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    section {
+      margin: 48px 0;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      text-align: center;
+      font-family: "Google Sans", "Noto Sans", Arial, sans-serif;
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .section-copy {
+      max-width: 760px;
+      margin: 0 auto 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .comparison-subsection {
+      margin-top: 38px;
+    }
+
+    .comparison-subsection h3 {
+      margin: 0 0 18px;
+      text-align: center;
+      font-family: "Google Sans", "Noto Sans", Arial, sans-serif;
+      font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+      font-weight: 400;
+    }
+
+    .abstract {
+      max-width: 860px;
+      margin: -8px auto 54px;
+      padding: 28px 0 0;
+      border-top: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .abstract h2 {
+      margin-bottom: 16px;
+    }
+
+    .abstract p {
+      margin: 0 auto 16px;
+      color: #3c4043;
+      font-size: clamp(1.04rem, 1.65vw, 1.18rem);
+      line-height: 1.72;
+      text-align: justify;
+      text-wrap: pretty;
+    }
+
+    .abstract p:last-child {
+      margin-bottom: 0;
+    }
+
+    .objective {
+      max-width: 860px;
+      margin: 0 auto 54px;
+    }
+
+    .objective h2 {
+      margin-bottom: 18px;
+      font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+    }
+
+    .objective p {
+      margin: 0 0 16px;
+      color: #3c4043;
+      font-size: 1rem;
+      line-height: 1.7;
+      text-align: justify;
+      text-wrap: pretty;
+    }
+
+    .objective p:last-child {
+      margin-bottom: 0;
+    }
+
+    .objective mjx-container[display="true"] {
+      margin: 1.35em 0 !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.15rem 0;
+    }
+
+    .safety-showcase {
+      width: 100%;
+      margin: 0 0 54px;
+    }
+
+    .safety-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .safety-table,
+    .safety-example {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.22), 0 8px 30px rgba(60, 64, 67, 0.08);
+    }
+
+    .safety-caption {
+      margin: 14px auto 0;
+      max-width: 920px;
+      color: #3c4043;
+      font-size: 1rem;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .safety-examples {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+
+    .safety-qualitative-intro {
+      margin-top: 22px;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+
+    .figure-title {
+      margin: 0 0 8px;
+      text-align: center;
+      color: #3c4043;
+      font-size: 0.98rem;
+      font-weight: 650;
+    }
+
+    .compare {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      background: var(--soft);
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.22), 0 8px 30px rgba(60, 64, 67, 0.08);
+      touch-action: none;
+      user-select: none;
+      cursor: ew-resize;
+    }
+
+    .compare img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .compare .right {
+      clip-path: inset(0 0 0 var(--split, 50%));
+    }
+
+    .compare::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: var(--split, 50%);
+      width: 2px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14);
+      transform: translateX(-1px);
+      z-index: 3;
+    }
+
+    .handle {
+      position: absolute;
+      top: 50%;
+      left: var(--split, 50%);
+      z-index: 4;
+      width: 42px;
+      height: 42px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: rgba(17, 24, 39, 0.72);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .handle::before,
+    .handle::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+    }
+
+    .handle::before {
+      left: 11px;
+      transform: translateY(-50%) rotate(-45deg);
+    }
+
+    .handle::after {
+      right: 11px;
+      transform: translateY(-50%) rotate(135deg);
+    }
+
+    .compare-label {
+      position: absolute;
+      top: 12px;
+      z-index: 5;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: #202124;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .compare-label.left-label {
+      left: 12px;
+    }
+
+    .compare-label.right-label {
+      right: 12px;
+    }
+
+    .selector-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .edit-examples {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      align-items: start;
+    }
+
+    .editing-table {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin-top: 30px;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.22), 0 8px 30px rgba(60, 64, 67, 0.08);
+    }
+
+    .editing-caption {
+      max-width: 920px;
+      margin: 14px auto 0;
+      color: #3c4043;
+      font-size: 1rem;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .edit-example {
+      min-width: 0;
+    }
+
+    .edit-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .edit-panel {
+      min-width: 0;
+    }
+
+    .edit-frame {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 8px;
+      background: var(--soft);
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.22), 0 8px 30px rgba(60, 64, 67, 0.08);
+    }
+
+    .edit-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .edit-panel > .figure-title {
+      min-height: 2.5em;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .edit-controls {
+      --angle: -135deg;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+      padding: 9px 11px;
+      border: 1px solid #d9dee7;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff, #f8fafc);
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.12);
+    }
+
+    .knob-wrap {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      display: grid;
+      place-items: center;
+    }
+
+    .edit-knob {
+      position: relative;
+      z-index: 2;
+      width: 42px;
+      height: 42px;
+      border: 1px solid #c8d1df;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 42%, #fff 0 24%, #e8edf5 25% 58%, #cbd5e1 100%);
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 8px 18px rgba(31, 41, 55, 0.18);
+      cursor: grab;
+      transform: rotate(var(--angle));
+      transition: transform 180ms ease;
+    }
+
+    .edit-knob:active {
+      cursor: grabbing;
+    }
+
+    .edit-knob::before {
+      content: "";
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      width: 4px;
+      height: 13px;
+      border-radius: 999px;
+      background: #2563eb;
+      transform: translateX(-50%);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+
+    .edit-knob:focus-visible,
+    .knob-tick:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, 0.26);
+      outline-offset: 3px;
+    }
+
+    .knob-tick {
+      --tick-angle: 0deg;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      transform: translate(-50%, -50%) rotate(var(--tick-angle)) translateY(-31px);
+      cursor: pointer;
+    }
+
+    .knob-tick::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: #9aa6b2;
+      transition: background 140ms ease, transform 140ms ease;
+    }
+
+    .knob-tick.active::before {
+      background: var(--accent);
+      transform: scale(1.35);
+    }
+
+    .edit-readout {
+      min-width: 0;
+    }
+
+    .edit-readout-value {
+      margin: 0;
+      color: #202124;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    footer {
+      margin-top: 56px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        width: min(100% - 22px, 980px);
+        padding-top: 34px;
+      }
+
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .edit-examples {
+        grid-template-columns: 1fr;
+      }
+
+      .button {
+        min-height: 38px;
+        padding: 0 14px;
+      }
+
+      .edit-controls {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .abstract {
+        margin-bottom: 44px;
+        padding-top: 24px;
+      }
+
+      .abstract p {
+        text-align: left;
+      }
+
+      .objective p {
+        text-align: left;
+      }
+
+      .safety-showcase {
+        width: 100%;
+        margin-left: 0;
+        transform: none;
+      }
+
+      .safety-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .safety-examples {
+        grid-template-columns: 1fr;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Steering Fields: Adaptive Vector Fields for Safe Image Generation and Beyond</h1>
+      <p class="authors">
+        <span>Simone Facchiano<sup>1,2</sup></span>,
+        <span>Jan Eric Lenssen<sup>1</sup></span>,
+        <span>Bernt Schiele<sup>1</sup></span>,
+        <span>Wolfgang Stammer<sup>1</sup></span><br>
+        <strong>Fabio Galasso<sup>2*</sup></strong>,
+        <strong>Jonas Fischer<sup>1*</sup></strong>
+      </p>
+      <p class="affiliations">
+        <sup>1</sup>Max Planck Institute for Informatics &nbsp;&nbsp;
+        <sup>2</sup>Sapienza University of Rome
+      </p>
+      <p class="venue">NeurIPS 2026</p>
+      <nav class="links" aria-label="Project links">
+        <a class="button" href="https://github.com/simonefacchiano/SteeringFields" target="_blank" rel="noopener">Code</a>
+        <a class="button disabled" aria-disabled="true">arXiv</a>
+      </nav>
+    </header>
+
+    <figure aria-label="Animated Steering Fields teaser" style="margin: 0 0 44px;">
+      <steering-teaser></steering-teaser>
+      <noscript>
+        <div style="width:100%;aspect-ratio:1220/750;overflow:hidden;">
+          <img src="teasers/teaser4_v2.png" alt="Steering Fields: noise, source and steered trajectories, and example outputs" style="display:block;width:168%;max-width:none;height:auto;">
+        </div>
+      </noscript>
+    </figure>
+    <script src="teasers/steering-teaser.js"></script>
+
+    <section class="abstract" aria-labelledby="abstract-title">
+      <h2 id="abstract-title">Abstract</h2>
+      <p>
+        As state-of-the-art text-to-image flow models achieve near-photorealistic quality, controlling their outputs, e.g., suppressing harmful content while promoting benign alternatives, has become a central challenge. The current steering paradigm consists of adding a global steering vector to selected activations. While functional, a fixed and example-agnostic vector applied uniformly along the entire trajectory cannot adapt to the changing state of the generation and often causes unintended global changes.
+      </p>
+      <p>
+        We introduce <em>Steering Fields</em>, a generalization of steering vectors that adaptively re-estimates the steering direction at each step of the generative process. Steering Fields operate on the noisy states of flow models, expose a continuous trade-off between steering strength and content preservation, and are compositional, enabling the simultaneous induction and inhibition of concepts, setting a new state of the art on safety steering benchmarks. Despite using no explicit spatial masks or object priors, the trajectory-adaptive estimation naturally preserves local structure, in a manner reminiscent of image editing. In fact, Steering Fields can serve as a structure-preserving image-editing technique that achieves state-of-the-art semantic fidelity (CLIP, VQAScore), while remaining model-agnostic and inversion-free.
+      </p>
+    </section>
+
+    <section class="objective" aria-labelledby="objective-title">
+      <h2 id="objective-title">A unified objective for compositional control</h2>
+      <p>
+        At every integration step we seek a steered velocity $v^*$ that is simultaneously close to the source field, attracted toward the target, and repelled from the undesired concept. We encode these three requirements in the single quadratic objective:
+      </p>
+      \[
+        \mathcal{L}(v) = \lVert v - v_{\text{src}} \rVert^2
+        + \mu\, \lVert v - v_{\text{tar}} \rVert^2
+        - \lambda\, \lVert v - v_{\text{away}} \rVert^2.
+      \]
+      <p>
+        The first term anchors the trajectory to the source generation; the second pulls it toward the target; the third pushes it away from the undesired concept. Setting $\nabla_v \mathcal{L} = 0$ yields the closed-form minimiser
+      </p>
+      \[
+        v^* = \frac{v_{\text{src}} + \mu\,v_{\text{tar}} - \lambda\,v_{\text{away}}}{1 + \mu - \lambda},
+      \]
+      <p>which can be rewritten as:</p>
+      \[
+        v^* = v_{\text{src}}
+        + \underbrace{\frac{\mu}{1 + \mu - \lambda}}_{\alpha}
+          \bigl(v_{\text{tar}} - v_{\text{src}}\bigr)
+        - \underbrace{\frac{\lambda}{1 + \mu - \lambda}}_{\beta}
+          \bigl(v_{\text{away}} - v_{\text{src}}\bigr).
+      \]
+    </section>
+
+    <section class="safety-showcase" aria-labelledby="safety-title">
+      <h2 id="safety-title">Safety Steering and Concept Blending</h2>
+      <p class="section-copy">
+        Steering Fields achieves state-of-the-art results on safety steering tasks across backbones, while maintaining almost perfect retain performances on unrelated prompts (COCO-1k).
+      </p>
+      <div class="safety-layout">
+        <figure style="margin: 0;">
+          <img class="safety-table" src="table_safety.png" alt="Safety steering benchmark results across FLUX and SD3.5 backbones">
+        </figure>
+      </div>
+      <p class="section-copy safety-qualitative-intro">
+        We also noticed that Steering Fields was particularly good at preserving the structures, the poses and the lights after the steering was applied, as shown below:
+      </p>
+      <div class="safety-examples" aria-label="Qualitative safety steering examples">
+        <img class="safety-example" src="paired/8_project_page.png" alt="Qualitative safety steering example 8">
+        <img class="safety-example" src="paired/60_project_page.png" alt="Qualitative safety steering example 60">
+      </div>
+    </section>
+
+    <section aria-label="Concept blending and image editing comparisons">
+      <div class="comparison-subsection">
+        <p class="section-copy">
+          This behavior was not tied to the safety task itself, but also applied to other tasks of steering (e.g. Concept Blending). Try it youself: Drag each divider horizontally to compare the base generation with the steered result.
+        </p>
+        <div class="comparison-grid">
+          <figure>
+            <figcaption class="figure-title">spaghetti &rarr; dog</figcaption>
+            <div class="compare" style="--split: 50%" data-compare>
+              <img src="dog_plus_spaghetti.png" alt="Base dog plus spaghetti result">
+              <img class="right" src="dog_plus_spaghetti_specific.png" alt="Steered dog plus spaghetti result">
+              <span class="compare-label left-label">base</span>
+              <span class="compare-label right-label">steered</span>
+              <span class="handle" aria-hidden="true"></span>
+            </div>
+          </figure>
+
+          <figure>
+            <figcaption class="figure-title">clouds &rarr; dogs</figcaption>
+            <div class="compare" style="--split: 50%" data-compare>
+              <img src="clouds05.png" alt="Base clouds result">
+              <img class="right" src="clouds0503.png" alt="Alternative clouds result">
+              <span class="compare-label left-label">base</span>
+              <span class="compare-label right-label">steered</span>
+              <span class="handle" aria-hidden="true"></span>
+            </div>
+          </figure>
+        </div>
+      </div>
+
+      <p class="section-copy">
+        This behavior is reminiscent of a related but distinct line of work: image editing
+      </p>
+      <div class="comparison-subsection">
+        <h2>Image Editing</h2>
+        <p class="section-copy">
+          In Steering Fields the same mechanism that steers generation also edits an input image, enabling direct comparison with the editing literature on standard benchmarks. Altough Steering Fields was not originally designed for editing, it naturally extends to this task, showing competitive performances with the state-of-the-art.
+        </p>
+        <div class="selector-wrap">
+          <figure>
+            <img class="editing-table" src="table_editing.png" alt="Image editing semantic metric comparison table">
+            <figcaption class="editing-caption">Steering Fields leads on all semantic metrics despite not relying on inversion or being optimised for editing. Image editing naturally emerges from its formulation</figcaption>
+          </figure>
+          <p class="section-copy">
+            Try it yourself: move the knob and edit the image.
+          </p>
+          <div class="edit-examples">
+            <div class="edit-example">
+              <p class="figure-title">Swan edits</p>
+              <div class="edit-pair">
+                <div class="edit-panel">
+                  <p class="figure-title">A swan on a lake</p>
+                  <div class="edit-frame">
+                    <img src="edit/edit_qualitatives_swan/swan_baseline.png" alt="A swan on a lake">
+                  </div>
+                </div>
+                <div class="edit-panel">
+                  <p class="figure-title" id="swan-caption">Origami</p>
+                  <div class="edit-frame">
+                    <img id="swan-image" src="edit/edit_qualitatives_swan/swan_origami.png" alt="+ origami">
+                  </div>
+                  <div class="edit-controls" data-options="swan" aria-label="Choose swan edit"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="edit-example">
+              <p class="figure-title">Cat edits</p>
+              <div class="edit-pair">
+                <div class="edit-panel">
+                  <p class="figure-title">A cat on the couch</p>
+                  <div class="edit-frame">
+                    <img src="edit/edit_qualitatives cat/input.png" alt="A cat on the couch">
+                  </div>
+                </div>
+                <div class="edit-panel">
+                  <p class="figure-title" id="cat-caption">Sunglasses</p>
+                  <div class="edit-frame">
+                    <img id="cat-image" src="edit/edit_qualitatives cat/sunglasses.png" alt="+ sunglasses">
+                  </div>
+                  <div class="edit-controls" data-options="cat" aria-label="Choose cat edit"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Steering Fields. More project details, paper link, and citation can be added once the arXiv entry is live.
+    </footer>
+  </main>
+
+  <script>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    document.querySelectorAll("[data-compare]").forEach((compare) => {
+      const update = (clientX) => {
+        const rect = compare.getBoundingClientRect();
+        const percent = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100);
+        compare.style.setProperty("--split", `${percent}%`);
+      };
+
+      compare.addEventListener("pointerdown", (event) => {
+        compare.setPointerCapture(event.pointerId);
+        update(event.clientX);
+      });
+
+      compare.addEventListener("pointermove", (event) => {
+        if (event.buttons) update(event.clientX);
+      });
+
+      compare.addEventListener("pointerup", (event) => {
+        compare.releasePointerCapture(event.pointerId);
+      });
+    });
+
+    const swanStates = [
+      {
+        caption: "+ origami",
+        src: "edit/edit_qualitatives_swan/swan_origami.png"
+      },
+      {
+        caption: "+ dragon",
+        src: "edit/edit_qualitatives_swan/swan_dragon.png"
+      },
+      {
+        caption: "+ crown",
+        src: "edit/edit_qualitatives_swan/swan_crown.png"
+      },
+      {
+        caption: "+ two baby ducks",
+        src: "edit/edit_qualitatives_swan/swan_two_baby_ducks.png"
+      },
+      {
+        caption: "+ many baby ducks",
+        src: "edit/edit_qualitatives_swan/swan_and_its_baby_ducks.png"
+      }
+    ];
+
+    const catStates = [
+      {
+        caption: "+ sunglasses",
+        src: "edit/edit_qualitatives cat/sunglasses.png"
+      },
+      {
+        caption: "+ yawning",
+        src: "edit/edit_qualitatives cat/yawning.png"
+      },
+      {
+        caption: "+ lego bricks",
+        src: "edit/edit_qualitatives cat/lego.png"
+      },
+      {
+        caption: "+ mustaches",
+        src: "edit/edit_qualitatives cat/mustaches.png"
+      },
+      {
+        caption: "+ striped",
+        src: "edit/edit_qualitatives cat/striped.png"
+      }
+    ];
+
+    const galleries = {
+      swan: {
+        states: swanStates,
+        image: document.getElementById("swan-image"),
+        caption: document.getElementById("swan-caption"),
+        options: document.querySelector('[data-options="swan"]')
+      },
+      cat: {
+        states: catStates,
+        image: document.getElementById("cat-image"),
+        caption: document.getElementById("cat-caption"),
+        options: document.querySelector('[data-options="cat"]')
+      }
+    };
+
+    const minKnobAngle = -135;
+    const maxKnobAngle = 135;
+
+    Object.values(galleries).forEach((gallery) => {
+      let activeIndex = 0;
+      const stepAngle = (maxKnobAngle - minKnobAngle) / (gallery.states.length - 1);
+
+      const knobWrap = document.createElement("div");
+      knobWrap.className = "knob-wrap";
+
+      const knob = document.createElement("button");
+      knob.className = "edit-knob";
+      knob.type = "button";
+      knob.setAttribute("role", "slider");
+      knob.setAttribute("aria-valuemin", "1");
+      knob.setAttribute("aria-valuemax", String(gallery.states.length));
+      knobWrap.appendChild(knob);
+
+      const readout = document.createElement("div");
+      readout.className = "edit-readout";
+      readout.innerHTML = `
+        <p class="edit-readout-value"></p>
+      `;
+
+      const value = readout.querySelector(".edit-readout-value");
+
+      const formatPrompt = (caption) => {
+        const prompt = caption.replace(/^\+\s*/, "");
+        return prompt.charAt(0).toUpperCase() + prompt.slice(1);
+      };
+
+      const ticks = gallery.states.map((state, index) => {
+        const tick = document.createElement("button");
+        tick.className = "knob-tick";
+        tick.type = "button";
+        tick.title = formatPrompt(state.caption);
+        tick.setAttribute("aria-label", formatPrompt(state.caption));
+        tick.style.setProperty("--tick-angle", `${minKnobAngle + stepAngle * index}deg`);
+        tick.addEventListener("click", () => setState(index));
+        knobWrap.appendChild(tick);
+        return tick;
+      });
+
+      const setState = (index) => {
+        activeIndex = clamp(index, 0, gallery.states.length - 1);
+        const state = gallery.states[activeIndex];
+        const angle = minKnobAngle + stepAngle * activeIndex;
+
+        gallery.image.src = state.src;
+        gallery.image.alt = state.caption;
+        gallery.caption.textContent = formatPrompt(state.caption);
+        gallery.options.style.setProperty("--angle", `${angle}deg`);
+        knob.setAttribute("aria-valuenow", String(activeIndex + 1));
+        knob.setAttribute("aria-valuetext", formatPrompt(state.caption));
+        knob.setAttribute("aria-label", formatPrompt(state.caption));
+        value.textContent = formatPrompt(state.caption);
+        ticks.forEach((tick, tickIndex) => {
+          tick.classList.toggle("active", tickIndex === activeIndex);
+        });
+      };
+
+      const setStateFromPointer = (event) => {
+        const rect = knobWrap.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const pointerAngle = Math.atan2(event.clientX - centerX, centerY - event.clientY) * 180 / Math.PI;
+        const clampedAngle = clamp(pointerAngle, minKnobAngle, maxKnobAngle);
+        setState(Math.round((clampedAngle - minKnobAngle) / stepAngle));
+      };
+
+      knob.addEventListener("pointerdown", (event) => {
+        knob.setPointerCapture(event.pointerId);
+        setStateFromPointer(event);
+      });
+
+      knob.addEventListener("pointermove", (event) => {
+        if (event.buttons) setStateFromPointer(event);
+      });
+
+      knob.addEventListener("pointerup", (event) => {
+        knob.releasePointerCapture(event.pointerId);
+      });
+
+      knob.addEventListener("keydown", (event) => {
+        const keySteps = {
+          ArrowLeft: -1,
+          ArrowDown: -1,
+          ArrowRight: 1,
+          ArrowUp: 1,
+          Home: -Infinity,
+          End: Infinity
+        };
+
+        if (!(event.key in keySteps)) return;
+        event.preventDefault();
+        const offset = keySteps[event.key];
+        if (offset === -Infinity) setState(0);
+        else if (offset === Infinity) setState(gallery.states.length - 1);
+        else setState(activeIndex + offset);
+      });
+
+      gallery.options.append(knobWrap, readout);
+      setState(0);
+    });
+  </script>
+</body>
+</html>
