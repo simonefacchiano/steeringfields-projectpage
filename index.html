@@ -148,6 +148,33 @@
       font-size: 1rem;
     }
 
+    .citation {
+      max-width: 860px;
+      margin-right: auto;
+      margin-left: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .citation-intro {
+      margin-bottom: 18px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .citation pre {
+      margin: 0;
+      padding: 20px 22px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--soft);
+      color: #30343b;
+      font: 0.92rem/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
     .comparison-subsection {
       margin-top: 38px;
     }
@@ -620,7 +647,7 @@
       <p class="venue">NeurIPS 2026</p>
       <nav class="links" aria-label="Project links">
         <a class="button" href="https://github.com/simonefacchiano/SteeringFields" target="_blank" rel="noopener">Code</a>
-        <a class="button" href="https://arxiv.org/pdf/2609.39573">arXiv</a>
+        <a class="button" href="https://arxiv.org/abs/2609.39573">arXiv</a>
       </nav>
     </header>
 
@@ -778,8 +805,22 @@
       </div>
     </section>
 
+    <section class="citation" aria-labelledby="citation-title">
+      <h2 id="citation-title">Cite Steering Fields in your research</h2>
+      <p class="citation-intro">If you use Steering Fields in your research, please cite our paper:</p>
+      <pre><code>@misc{facchiano2026steeringfieldsadaptivevector,
+  title        = {Steering Fields: Adaptive Vector Fields for Safe Image Generation and Beyond},
+  author       = {Facchiano, Simone and Lenssen, Jan Eric and Schiele, Bernt and Stammer, Wolfgang and Galasso, Fabio and Fischer, Jonas},
+  year         = {2026},
+  eprint       = {2609.39573},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.CV},
+  url          = {https://arxiv.org/abs/2609.39573}
+}</code></pre>
+    </section>
+
     <footer>
-      Steering Fields. More project details, paper link, and citation can be added once the arXiv entry is live.
+      Steering Fields. See the paper and citation above for more details.
     </footer>
   </main>
 
